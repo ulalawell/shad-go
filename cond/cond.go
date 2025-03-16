@@ -46,10 +46,12 @@ func New(l Locker) *Cond {
 //	... make use of condition ...
 //	c.L.Unlock()
 func (c *Cond) Wait() {
-	c.L.Unlock()
 	c.ch <- struct{}{}
 	newCh := make(chan struct{})
 	c.queue = append(c.queue, newCh)
+
+	c.L.Unlock()
+
 	<-c.ch
 
 	newCh <- struct{}{}
